@@ -1,0 +1,34 @@
+{
+  "name": "gisterm",
+  "version": "1.0.0",
+  "description": "An easy CLI for uploading gists.",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moriczgergo/gisterm.git"
+  },
+  "keywords": [
+    "cli",
+    "gist",
+    "github"
+  ],
+  "author": "skiilaa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/moriczgergo/gisterm/issues"
+  },
+  "homepage": "https://github.com/moriczgergo/gisterm#readme",
+  "devDependencies": {
+    "standard": "^11.0.1"
+  },
+  "dependencies": {
+    "@octokit/rest": "^15.5.1",
+    "yargs": "^11.0.0"
+  },
+  "bin" : {
+    "gisterm": "index.js"
+  }
+}
