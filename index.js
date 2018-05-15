@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
-var octokit = require('@octokit/rest')()
-var os = require('os')
-var fs = require('fs')
-var path = require('path')
+var octokit = require('@octokit/rest')() // GitHub API
+var os = require('os') // Used to get home directory
+var fs = require('fs') // Used for reading .gisterm config file
+var path = require('path') // User for path building
 
-const saveFilePath = path.join(os.homedir(), '.gisterm')
+const saveFilePath = path.join(os.homedir(), '.gisterm') // Path for .gisterm config file
 
+// Yargs setup
 var argv = require('yargs')
   .usage('Usage: $0 <command> [options]')
   .command('auth <token>', 'Authenticate to GitHub with an access token.', function (yargs) {
@@ -18,14 +19,15 @@ var argv = require('yargs')
         description: 'GitHub token with gist permission.'
       })
   }, function (args) {
-    var configObject = {
+    // Auth function
+    var configObject = { // Object with updates
       token: args.token
     }
-    var baseObject = {}
-    if (fs.existsSync(saveFilePath)) baseObject = JSON.parse(fs.readFileSync(saveFilePath, 'utf8'))
-    var finalObject = Object.assign(baseObject, configObject)
-    fs.writeFileSync(saveFilePath, JSON.stringify(finalObject), 'utf8')
-    console.log(`Token ${finalObject.token} has been saved.`)
+    var baseObject = {} // Base object
+    if (fs.existsSync(saveFilePath)) baseObject = JSON.parse(fs.readFileSync(saveFilePath, 'utf8')) // If .gisterm already exists, load it into base object
+    var finalObject = Object.assign(baseObject, configObject) // Combine base object and updated object
+    fs.writeFileSync(saveFilePath, JSON.stringify(finalObject), 'utf8') // Write combined object
+    console.log(`Token "${finalObject.token}" has been saved.`)
   })
   .command('create <files...>', 'Create a gist.', function (yargs) {
     yargs
@@ -45,22 +47,25 @@ var argv = require('yargs')
         default: false
       })
   }, function (args) {
-    if (!fs.existsSync(saveFilePath)) {
+    // Create function
+    if (!fs.existsSync(saveFilePath)) { // Check for .gisterm
       console.error("Couldn't find token.\nDid you forget to authenticate?")
       process.exit(1)
     }
-    var token = JSON.parse(fs.readFileSync(saveFilePath, 'utf8')).token
-    octokit.authenticate({
+    var token = JSON.parse(fs.readFileSync(saveFilePath, 'utf8')).token // Get saved token from .gisterm
+    octokit.authenticate({ // Authenticate with token
       type: 'token',
       token
     })
+
+    // File object builder
     var files = {}
-    args.files.forEach(function (file) {
-      if (!fs.existsSync(file)) {
+    args.files.forEach(function (file) { // For each specified file
+      if (!fs.existsSync(file)) { // Check if the file exists
         console.error(`File "${file}" does not exist.`)
         process.exit(1)
       }
-      files[file] = {
+      files[path.basename(file)] = { // Building file object, read GH Gist API docs for more info
         content: fs.readFileSync(file, 'utf8')
       }
     })
@@ -80,4 +85,10 @@ var argv = require('yargs')
   .alias('h', 'help')
   .argv
 
-if (argv) {} // fuck you standard style
+/* Why is the if statement below needed?
+ * It's because this style of yargs isn't compatible with the standard style.
+ * If I don't get .argv at the end, yargs doesn't do anything.
+ * If I don't store the .argv in the variable, standard complains.
+ * If I don't use the variable with .argv, standard complains.
+ */
+if (argv) {}
