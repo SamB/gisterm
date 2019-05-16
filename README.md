@@ -7,7 +7,7 @@ First, you'll need to install gisterm:
 npm i -g gisterm
 ```
 
-Then, you'll need to [create a token on GitHub](https://github.com/settings/tokens/new) (needs to have `gist` permission), and then set it up with gisterm:
+Then, you'll need to [create a token on GitHub](https://github.com/settings/tokens/new?scopes=gist) (needs to have `gist` permission), and then set it up with gisterm:
 ```
 gisterm auth YOUR_TOKEN
 ```
